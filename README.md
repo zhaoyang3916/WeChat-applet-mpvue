@@ -118,3 +118,112 @@ style 支持的语法:
 </script>
 ```
 [更多请查看使用手册](http://mpvue.com/mpvue/#_1)
+### 开发涉及技术
+#### 图片
+图片来源接口 [详细文档](https://developers.weixin.qq.com/miniprogram/dev/api/media/image/wx.chooseImage.html)
+```js
+wx.chooseImage({
+  count: 1, // 默认9
+  sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+  sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+  success (res) {
+    // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片res.tempFilePaths
+      
+  },
+  fail (res) {
+    console.log(res.errMsg)
+  }
+})
+```
+图片上传阿里OSS
+```js
+var nowTime = formatTime(new Date())
+// 一次上传多张
+for (var i = 0; i < res.tempFilePaths.length; i++) {
+// 显示消息提示框
+  wx.showLoading({
+    title: '上传中' + (i + 1) + '/' + res.tempFilePaths.length,
+    mask: true
+  })
+  // 上传图片
+  // 你的域名下的/cbb文件下的/当前年月日文件下的/图片.png
+  // 图片路径可自行修改
+  uploadImage.uploadFile(res.tempFilePaths[i], 'cbb/' + nowTime + '/', 
+  function (result) {
+    // 成功的操作
+    console.log('======上传成功图片地址为：', result)
+    wx.hideLoading()
+  }, function (result) {
+    console.log('======上传失败======', result)
+    wx.hideLoading()
+  })
+}
+```
+图片放大 [详细文档](https://developers.weixin.qq.com/miniprogram/dev/api/media/image/wx.previewImage.html)
+``` js
+wx.previewImage({
+  current: curPath, // 当前显示图片的http链接
+  urls: this.tempFilePaths // 需要预览的图片http链接列表
+})
+```
+#### 位置
+使用经纬度获取详细地址 [详细文档](http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-geocoding-abroad)
+```js
+import commonAPI from '@/api/commonAPI'
+
+commonAPI.getCurrentAddress(res.latitude, res.longitude).then(function (result) {
+  // 处理获取来的数据
+  var address = JSON.parse(result.split('renderReverse&&renderReverse(').join('').split(')').join(''))
+  //输出详细地址
+  console.log(address.result.formatted_address)
+}).catch(function (err) {
+  console.log(err)
+})
+```
+获取经纬度接口 [详细文档](https://developers.weixin.qq.com/miniprogram/dev/api/location/wx.getLocation.html)
+```js
+wx.getLocation({
+  type: 'gcj02',
+  success (res) {
+    // 可以输出的信息
+    // const latitude = res.latitude
+    // const longitude = res.longitude
+    // const speed = res.speed
+    // const accuracy = res.accuracy
+  }
+})
+```
+#### mpvue基本用法-js
+```js
+export default {
+  // 数据定义
+  data () {
+    return {
+      motto: 'Hello World',
+      userInfo: {},
+      index: 0,
+      array: ['A', 'B', 'C']
+    }
+  },
+  // 组件调用
+  components: {
+    ccamers
+  },
+  // 方法
+  methods: {
+    bindPickerChange (e) {
+      // 一个普通的方法
+      console.log(e)
+      this.index = e.mp.detail.value
+    },
+    clickHandle (msg, ev) {
+      // 点击后的回调函数
+      console.log('clickHandle:', msg, ev)
+    }
+  },
+  created () {
+    // 初始化
+    // 调用应用实例的方法获取全局数据
+  }
+}
+```
