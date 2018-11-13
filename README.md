@@ -123,12 +123,13 @@ style 支持的语法:
 修改src/pages.js
 ```js
 {
-path: 'pages/index/index',
-config: {
-  navigationBarTitleText: '乡村销客',
-  enablePullDownRefresh: true,
-  usingComponents: {
-    'van-button': '/static/vant/button/index'
+  path: 'pages/index/index',
+  config: {
+    navigationBarTitleText: '乡村销客',
+    enablePullDownRefresh: true,
+    usingComponents: {
+      'van-button': '/static/vant/button/index'
+    }
   }
 }
 ```
