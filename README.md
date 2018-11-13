@@ -118,6 +118,75 @@ style 支持的语法:
 </script>
 ```
 [更多请查看使用手册](http://mpvue.com/mpvue/#_1)
+### 使用第三方VantUI组件
+#### 如何使用
+修改src/pages.js
+```js
+{
+path: 'pages/index/index',
+config: {
+  navigationBarTitleText: '乡村销客',
+  enablePullDownRefresh: true,
+  usingComponents: {
+    'van-button': '/static/vant/button/index'
+  }
+}
+```
+index.vue
+```html
+<van-button>测试</van-button>
+```
+> 更多组件使用请查看[Vant官方文档](https://youzan.github.io/vant-weapp/#/intro)
+#### 注意事项
+##### 数据绑定
+```js
+v-bind:value="value"
+//或者
+:value="value"
+```
+##### 事件监听
+```js
+@click="onClick"
+```
+##### vue 中组件引入
+vant中像notify这种操作反馈类的组件都有两个引入，一是组件的引入，这个在pages.js中引入；另一个是方法的引入，需要在vue文件中import引入，值得注意的是，这里的引入不能使用绝对路径，可以用类似于这样的相对路径。
+```js
+import Notify from '@/../static/notify/notify' //@是mpvue的一个别名，指向src目录
+```
+##### 获取 event
+值得注意的是，mpvue中获取event值与原生小程序有所不同。举例：
+```js
+onChange(event){ // 获取表单组件filed的值
+  console.log(event.mp.detail) // 注意加入mp
+}
+```
+#### BUG 及报错处理方法
+##### 监听名
+mpvue 里面无法使用@click-icon这样的监听名,因此如果 API 文档里面有出现这样的监听名，那么需要手动修改源代码。
+可以改成驼峰式的监听名。
+```js
+// static/vant/field/index.js
+
+this.$emit('click-icon');
+
+// 修改为:
+
+this.$emit('clickIcon');
+```
+##### 报错
+
+一般的报错报错都可以通过一下流程处理。
+
++ 是否打开了微信开发者工具中的ES6转ES5功能。
++ 仔细检查代码和比对文档，看看是否有使用不当的地方。
++ 重新编译npm start或删掉dist目录重新npm start
++ 重启或更新微信开发者工具。
+若以上流程都走完了，还是无法解决报错，可以通过提交issues的方式，我来帮你解决。
+##### 引入组件报错
+```js
+VM54:1 thirdScriptError sdk uncaught third Error module "static/vant/notify/index.js" is not defined
+```
+解决办法是：打开小程序开发者工具中的ES6 转 ES5功能
 ### 开发涉及技术
 #### 图片
 图片来源接口 [详细文档](https://developers.weixin.qq.com/miniprogram/dev/api/media/image/wx.chooseImage.html)
